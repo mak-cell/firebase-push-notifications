@@ -23,5 +23,6 @@ urlpatterns = [
     path('send/' , send),
     path('send_device_id/', send_device_id, name='send_device_id'),
     path('firebase-messaging-sw.js',showFirebaseJS,name="show_firebase_js"),
+    path('delete_device_id/', delete_device_id, name='delete_device_id'),
     path('admin/', admin.site.urls),
 ]

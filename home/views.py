@@ -37,7 +37,7 @@ def index(request):
     return render(request , 'index.html')
 
 def send(request):
-    resgistration  = ['dmtsFW1_v3Bcs5jc6kH70A:APA91bFuFc0V2VQ-2qWSlxhUzzxnzp1_1JE9qzheEQJjril9AYbQgY8tNJT6Xb1ykoB3YZ2zKCvOZvKc9ADkVVpByZydo2t6-FhOIdsqylM5vptPQO5Eaq4YCQrffauSjiTIt9Hk_LIH']
+    resgistration  = ['conf5FjIgjAdP3R-CUziiZ:APA91bFG3KIxR9YxKq7IEA_vAWII4ES_dfAf2lDJ8d4-HOXH0s2f7zBEyXWnuxxfDh-AL3TJrF7f3bS8TzVjOq46H-qI43wKBLz43M9wdg_widWT8SnqVZWKi_ytwoyJh4Dn2ghL41wU']
     send_notification(resgistration , 'Code Keen added a new video' , 'Code Keen new video alert')
     return HttpResponse("sent")
 
@@ -45,8 +45,16 @@ def send(request):
 def send_device_id(request):
     if request.method == 'POST':
         token = validate_data(request, "token")
-        print(token)
+        print(token) # To do db calls Anil
         return respond(status_code=200, message="Device id recieved from server")
+    return respond(status_code=400, message="Bad token")
+    
+@csrf_exempt
+def delete_device_id(request):
+    if request.method == 'POST':
+        token = validate_data(request, "token")
+        print(token) # To do db calls Anil
+        return respond(status_code=200, message="Device id deleted from server")
     return respond(status_code=400, message="Bad token")
 
 def validate_data(request, key):
@@ -68,28 +76,30 @@ def respond(status_code, message, **kwargs):
 
 
 def showFirebaseJS(request):
-    data='importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");' \
-         'importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js"); ' \
-         'var firebaseConfig = {' \
-         '        apiKey: "AIzaSyBJeuQ3ZAjQlE77daP92qNVKgdt0EhQXmM",' \
-         '        authDomain: "bazarside-mak.firebaseapp.com",' \
-         '        databaseURL: "",' \
-         '        projectId: "bazarside-mak",' \
-         '        storageBucket: "bazarside-mak.appspot.com",' \
-         '        messagingSenderId: "559823649981",' \
-         '        appId: "1:559823649981:web:258ed7771ca85a3bdb4bd4",' \
-         '        measurementId: "G-L7M9P9L1VS"' \
-         ' };' \
-         'firebase.initializeApp(firebaseConfig);' \
-         'const messaging=firebase.messaging();' \
-         'messaging.setBackgroundMessageHandler(function (payload) {' \
-         '    console.log(payload);' \
-         '    const notification=JSON.parse(payload);' \
-         '    const notificationOption={' \
-         '        body:notification.body,' \
-         '        icon:notification.icon' \
-         '    };' \
-         '    return self.registration.showNotification(payload.notification.title,notificationOption);' \
-         '});'
+    notification = (
+        'importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");'
+        'importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js"); '
+        "var firebaseConfig = {"
+        '        apiKey: "AIzaSyBJeuQ3ZAjQlE77daP92qNVKgdt0EhQXmM",'
+        '        authDomain: "bazarside-mak.firebaseapp.com",'
+        '        databaseURL: "",'
+        '        projectId: "bazarside-mak",'
+        '        storageBucket: "bazarside-mak.appspot.com",'
+        '        messagingSenderId: "559823649981",'
+        '        appId: "1:559823649981:web:258ed7771ca85a3bdb4bd4",'
+        '        measurementId: "G-L7M9P9L1VS"'
+        " };"
+        "firebase.initializeApp(firebaseConfig);"
+        "const messaging=firebase.messaging();"
+        "messaging.setBackgroundMessageHandler(function (payload) {"
+        "    console.log(payload);"
+        "    const notification=JSON.parse(payload);"
+        "    const notificationOption={"
+        "        body:notification.body,"
+        "        icon:notification.icon"
+        "    };"
+        "    return self.registration.showNotification(payload.notification.title,notificationOption);"
+        "});"
+    )
 
-    return HttpResponse(data,content_type="text/javascript")
+    return HttpResponse(notification, content_type="text/javascript")
